@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ตารางเรียน / ตารางสอบ</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1>📚 ตารางเรียน / ตารางสอบ</h1>
+      <p class="subtitle">บันทึกงาน สอบ และติดตามความคืบหน้า</p>
+    </header>
+ 
+    <section class="summary">
+      <div class="summary-card">
+        <span class="summary-number" id="totalCount">0</span>
+        <span class="summary-label">รายการทั้งหมด</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-number" id="doneCount">0</span>
+        <span class="summary-label">เสร็จแล้ว</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <span class="progress-percent" id="progressPercent">0%</span>
+      </div>
+    </section>
+ 
+    <section class="form-section">
+      <h2>เพิ่มรายการใหม่</h2>
+      <form id="itemForm">
+        <div class="form-row">
+          <label>วิชา
+            <input type="text" id="subject" placeholder="เช่น แคลคูลัส 1" required>
+          </label>
+          <label>ประเภท
+            <select id="type">
+              <option value="สอบ">สอบ</option>
+              <option value="งาน/การบ้าน">งาน/การบ้าน</option>
+              <option value="รายงาน">รายงาน</option>
+              <option value="อื่นๆ">อื่นๆ</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-row">
+          <label>วันที่ส่ง/สอบ
+            <input type="date" id="dueDate" required>
+          </label>
+          <label>หมายเหตุ
+            <input type="text" id="note" placeholder="รายละเอียดเพิ่มเติม (ถ้ามี)">
+          </label>
+        </div>
+        <button type="submit" id="submitBtn">➕ เพิ่มรายการ</button>
+      </form>
+    </section>
+ 
+    <section class="list-section">
+      <div class="list-header">
+        <h2>รายการทั้งหมด</h2>
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">ทั้งหมด</button>
+          <button class="filter-btn" data-filter="pending">ยังไม่เสร็จ</button>
+          <button class="filter-btn" data-filter="done">เสร็จแล้ว</button>
+        </div>
+      </div>
+      <div id="loading" class="loading">กำลังโหลดข้อมูล...</div>
+      <ul id="itemList" class="item-list"></ul>
+      <p id="emptyMsg" class="empty-msg" style="display:none;">ยังไม่มีรายการ ลองเพิ่มดูสิ 👆</p>
+    </section>
+  </div>
+ 
+  <script src="app.js"></script>
+</body>
+</html>
+ 
