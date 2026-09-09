@@ -17,6 +17,7 @@
     <header class="app-header">
       <h1>📚 ตารางเรียน / ตารางสอบ</h1>
       <p class="subtitle">บันทึกงาน สอบ และติดตามความคืบหน้า</p>
+      <button id="enableNotifBtn" class="notif-btn">🔔 เปิดการแจ้งเตือน</button>
     </header>
  
     <section class="summary">
@@ -80,6 +81,11 @@
   </div>
  
   <script src="app.js"></script>
+ 
+  <!-- สำหรับแจ้งเตือน -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js"></script>
+  <script src="push.js"></script>
 </body>
 </html>
  
