@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbx4AeYVDWO-4x7tj8Vzqvcd3GdqU2zduG1UP1oB7GwdEi3ZZi7LKJHQgtJcHFrs9XJxdw/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyh9UDzdRRV5WEJsPxFaKXpJwEC_7Bder08l7SEkT-bC5_Vh9E5kGhJKE23wBeWM8reFg/exec";
  
 // ---------- รหัสประจำเครื่อง ----------
 // ใช้แยกว่าใครเป็นเจ้าของรายการไหน เก็บไว้ในเครื่องนี้ถาวร (จนกว่าจะล้างข้อมูลเว็บไซต์)
