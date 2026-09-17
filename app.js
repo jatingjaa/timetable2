@@ -1,4 +1,19 @@
-const STORAGE_KEY = "timetable2_items";
+const API_URL = "https://script.google.com/macros/s/AKfycbx4AeYVDWO-4x7tj8Vzqvcd3GdqU2zduG1UP1oB7GwdEi3ZZi7LKJHQgtJcHFrs9XJxdw/exec";
+ 
+// ---------- รหัสประจำเครื่อง ----------
+// ใช้แยกว่าใครเป็นเจ้าของรายการไหน เก็บไว้ในเครื่องนี้ถาวร (จนกว่าจะล้างข้อมูลเว็บไซต์)
+const USER_ID_KEY = "timetable2_userId";
+ 
+function getUserId() {
+  let id = localStorage.getItem(USER_ID_KEY);
+  if (!id) {
+    id = (crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(16).slice(2));
+    localStorage.setItem(USER_ID_KEY, id);
+  }
+  return id;
+}
+ 
+const userId = getUserId();
  
 let items = [];
 let currentFilter = "all";
@@ -23,60 +38,37 @@ const el = {
 const STATUS_DONE = "เสร็จแล้ว";
 const STATUS_PENDING = "ยังไม่เสร็จ";
  
-// ---------- Local storage helpers ----------
-// ข้อมูลทั้งหมดเก็บอยู่ในเครื่อง/เบราว์เซอร์นี้เท่านั้น ไม่ซิงค์ข้ามเครื่อง
- 
-function readStorage() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch (err) {
-    console.error("อ่านข้อมูลไม่สำเร็จ", err);
-    return [];
-  }
-}
- 
-function writeStorage(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
- 
-function makeId() {
-  return (crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(16).slice(2));
-}
+// ---------- API helpers ----------
  
 async function apiRead() {
-  return readStorage();
+  const res = await fetch(`${API_URL}?action=read&userId=${encodeURIComponent(userId)}`);
+  const data = await res.json();
+  if (data.status !== "ok") throw new Error(data.message || "โหลดข้อมูลล้มเหลว");
+  return data.items;
 }
  
 async function apiCreate(payload) {
-  const all = readStorage();
-  const newItem = {
-    ID: makeId(),
-    Subject: payload.subject,
-    Type: payload.type,
-    DueDate: payload.dueDate,
-    Status: payload.status,
-    Note: payload.note,
-  };
-  all.push(newItem);
-  writeStorage(all);
-  return { status: "ok", item: newItem };
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({ action: "create", data: { ...payload, userId } }),
+  });
+  return res.json();
 }
  
 async function apiUpdate(id, payload) {
-  const all = readStorage();
-  const idx = all.findIndex((it) => it.ID === id);
-  if (idx !== -1) {
-    all[idx] = { ...all[idx], ...(payload.status !== undefined ? { Status: payload.status } : {}) };
-    writeStorage(all);
-  }
-  return { status: "ok" };
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({ action: "update", data: { id, ...payload } }),
+  });
+  return res.json();
 }
  
 async function apiDelete(id) {
-  const all = readStorage().filter((it) => it.ID !== id);
-  writeStorage(all);
-  return { status: "ok" };
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({ action: "delete", data: { id } }),
+  });
+  return res.json();
 }
  
 // ---------- Rendering ----------
@@ -173,6 +165,7 @@ async function loadItems() {
  
 async function toggleStatus(id, checked) {
   const newStatus = checked ? STATUS_DONE : STATUS_PENDING;
+  // อัปเดตหน้าจอทันที (optimistic update)
   const target = items.find((it) => it.ID === id);
   if (target) target.Status = newStatus;
   render();
